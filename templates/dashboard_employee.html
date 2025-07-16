@@ -2,29 +2,83 @@
 <html>
 <head>
     <title>Employee Dashboard</title>
+    <style>
+        body {
+            background: linear-gradient(to bottom, #e0f7ff, #a2d5f2);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            width: 400px;
+            margin: 50px auto;
+            padding: 25px;
+            background-color: #f4f4f4;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2a5d9f;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            color: #333;
+        }
+        select, input[type="text"], button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #2a5d9f;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #244a85;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Employee Dashboard</h1>
-    <p>Here you can browse and apply for internal job postings.</p>
-    <h2>Available Jobs</h2>
-<ul>
-    {% for job in jobs %}
-    <li>
-        <strong>{{ job.title }}</strong> ({{ job.department }})<br>
-        Location: {{ job.location }}<br>
-        Skills Required: {{ job.skills_required }}<br>
-        Description: {{ job.description }}<br>
-        <form action="{{ url_for('apply_job', job_id=job['id']) }}" method="POST" enctype="multipart/form-data">
-    <input type="file" name="resume" required>
-    <button type="submit">Apply</button>
-</form>
+    <div class="container">
+        <h2 style="margin-bottom: 20px;">🔍 Search & Filter Jobs</h2>
+        <form method="GET" action="/dashboard/employee">
+            <label for="department">Department:</label>
+            <select name="department">
+                <option value="">All</option>
+                <option value="HR">HR</option>
+                <option value="Finance">Finance</option>
+                <option value="Sales">Sales</option>
+                <option value="IT">IT</option>
+                <option value="Marketing">Marketing</option>
+            </select>
 
+            <label for="location">Location:</label>
+            <select name="location">
+                <option value="">All</option>
+                <option value="Chennai">Chennai</option>
+                <option value="Kolkata">Kolkata</option>
+                <option value="Kochi">Kochi</option>
+                <option value="Bangalore">Bangalore</option>
+            </select>
 
+            <label for="skill">Skill:</label>
+            <select name="skill">
+                <option value="">All</option>
+                <option value="Python">Python</option>
+                <option value="Excel">Excel</option>
+                <option value="Leadership">Leadership</option>
+                <option value="Communication">Communication</option>
+                <option value="Salesforce">Salesforce</option>
+                <option value="C++">C++</option>
+                <option value="Team Management">Team Management</option>
+            </select>
 
-        <hr>
-    </li>
-    {% endfor %}
-</ul>
-
+            <button type="submit">Search</button>
+        </form>
+    </div>
 </body>
 </html>

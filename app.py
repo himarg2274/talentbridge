@@ -131,10 +131,44 @@ def hr_dashboard():
 
 @app.route('/dashboard/employee')
 def employee_dashboard():
+    dept = request.args.get("department")
+    location = request.args.get("location")
+    skill = request.args.get("skill")
+
+    query = "SELECT * FROM jobs WHERE 1=1"
+    params = []
+
+    if dept:
+        query += " AND department = %s"
+        params.append(dept)
+    if location:
+        query += " AND location = %s"
+        params.append(location)
+    if skill:
+        query += " AND skills_required LIKE %s"
+        params.append(f"%{skill}%")
+
+    query += " ORDER BY created_at DESC"
+
     cur = mysql.connection.cursor()
-    cur.execute("SELECT * FROM jobs ORDER BY created_at DESC")
+
+    # Get filtered jobs
+    cur.execute(query, tuple(params))
     jobs = cur.fetchall()
-    return render_template('dashboard_employee.html', jobs=jobs)
+
+    # Get unique departments and locations from DB
+    cur.execute("SELECT DISTINCT department FROM jobs")
+    departments = [row['department'] for row in cur.fetchall()]
+
+    cur.execute("SELECT DISTINCT location FROM jobs")
+    locations = [row['location'] for row in cur.fetchall()]
+
+    cur.close()
+
+    return render_template("dashboard_employee.html", jobs=jobs,
+                           departments=departments, locations=locations)
+
+
 
 # Optional: Temporary manual routes (can delete later)
 @app.route('/create-users-table')
