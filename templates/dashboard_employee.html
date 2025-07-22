@@ -6,25 +6,36 @@
 <body>
     <h1>Welcome to the Employee Dashboard</h1>
     <p>Here you can browse and apply for internal job postings.</p>
+
+    <!-- Link to general resume upload -->
+   <!-- Resume upload icon link -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<p>
+    <a href="{{ url_for('employee_apply') }}" style="text-decoration: none; font-size: 1.2rem; color: #1d5093;">
+        <i class="fas fa-file-upload"></i> Apply with Resume
+    </a>
+</p>
+
+
     <h2>Available Jobs</h2>
-<ul>
-    {% for job in jobs %}
-    <li>
-        <strong>{{ job.title }}</strong> ({{ job.department }})<br>
-        Location: {{ job.location }}<br>
-        Skills Required: {{ job.skills_required }}<br>
-        Description: {{ job.description }}<br>
-        <form action="{{ url_for('apply_job', job_id=job['id']) }}" method="POST" enctype="multipart/form-data">
-    <input type="file" name="resume" required>
-    <button type="submit">Apply</button>
-</form>
+    <ul>
+        {% for job in jobs %}
+        <li>
+            <strong>{{ job.title }}</strong> ({{ job.department }})<br>
+            Location: {{ job.location }}<br>
+            Skills Required: {{ job.skills_required }}<br>
+            Description: {{ job.description }}<br>
 
+            <form action="{{ url_for('apply_job', job_id=job['id']) }}" method="POST" enctype="multipart/form-data">
+                <label>Attach Resume:</label>
+                <input type="file" name="resume" required>
+                <button type="submit">Apply</button>
+            </form>
 
-
-        <hr>
-    </li>
-    {% endfor %}
-</ul>
-
+            <hr>
+        </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

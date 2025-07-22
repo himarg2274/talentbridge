@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Resume</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to top, hsl(201, 81%, 77%), #ffffff);
+            font-family: Arial, sans-serif;
+        }
+        .box {
+            width: 500px;
+            background: rgb(224, 224, 224);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 40px 30px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            color: #678ac2;
+            font-size: 2rem;
+        }
+        form input {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #000000;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        button {
+            width: 100%;
+            background: #678ac2;
+            color: #fff;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        button:hover {
+            background: #357ae8;
+        }
+        a {
+            text-decoration: none;
+            color: #1d5093;
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function confirmSubmission(event) {
+            if (!confirm("Are you sure you want to submit your application?")) {
+                event.preventDefault(); // Stop form submission
+            } else {
+                alert("Your application is submitted!");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="box">
+        <h2>Upload Resume</h2>
+        <form method="POST" enctype="multipart/form-data" onsubmit="confirmSubmission(event)">
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="text" name="employee_id" placeholder="Employee ID" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="current_position" placeholder="Current Position" required>
+            <input type="text" name="interested_position" placeholder="Interested Position" required>
+            <input type="file" name="resume" required>
+            <button type="submit">Submit Application</button>
+        </form>
+        <a href="{{ url_for('employee_dashboard') }}">Back to Dashboard</a>
+    </div>
+</body>
+</html>

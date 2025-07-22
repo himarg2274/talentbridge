@@ -5,7 +5,6 @@ import os
 from werkzeug.utils import secure_filename
 import time
 
-
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
@@ -33,12 +32,10 @@ def apply_job(job_id):
         flash("No file selected.")
         return redirect(url_for('employee_dashboard'))
 
-    # Generate a unique file name
     filename = secure_filename(f"{session['user_id']}_{int(time.time())}_{resume.filename}")
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     resume.save(filepath)
 
-    # Save to DB
     cur = mysql.connection.cursor()
     cur.execute("""
         INSERT INTO applications (user_id, job_id, resume_path)
@@ -62,8 +59,6 @@ def register():
         role = request.form['role']
 
         cur = mysql.connection.cursor()
-
-        # Check if email already exists
         cur.execute("SELECT * FROM users WHERE email = %s", (email,))
         existing_user = cur.fetchone()
 
@@ -71,14 +66,12 @@ def register():
             flash("Email already exists. Please use a different one.")
             return redirect(url_for('register'))
 
-        # Insert new user
         cur.execute("INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
                     (name, email, password, role))
         mysql.connection.commit()
         flash("Registered successfully! You can now log in.")
         return redirect(url_for('home'))
     return render_template('register.html')
-
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -105,7 +98,6 @@ def login():
     else:
         flash("Email not registered.")
         return redirect('/')
-
 
 @app.route('/dashboard/hr', methods=['GET', 'POST'])
 def hr_dashboard():
@@ -136,7 +128,46 @@ def employee_dashboard():
     jobs = cur.fetchall()
     return render_template('dashboard_employee.html', jobs=jobs)
 
-# Optional: Temporary manual routes (can delete later)
+@app.route('/employees/apply', methods=['GET', 'POST'])
+def employee_apply():
+    if 'user_id' not in session:
+        flash("Please log in first.")
+        return redirect(url_for('home'))
+
+    if request.method == 'POST':
+        name = request.form['name']
+        employee_id = request.form['employee_id']
+        email = request.form['email']
+        current_position = request.form['current_position']
+        interested_position = request.form['interested_position']
+
+        if 'resume' not in request.files:
+            flash("No resume file found.")
+            return redirect(url_for('employee_apply'))
+
+        resume = request.files['resume']
+
+        if resume.filename == '':
+            flash("No file selected.")
+            return redirect(url_for('employee_apply'))
+
+        filename = secure_filename(f"{session['user_id']}_{int(time.time())}_{resume.filename}")
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        resume.save(filepath)
+
+        cur = mysql.connection.cursor()
+        cur.execute("""
+            UPDATE users
+            SET name = %s, email = %s, skills = %s, resume_path = %s
+            WHERE id = %s
+        """, (name, email, f"Employee ID: {employee_id}, Current: {current_position}, Interested: {interested_position}", filepath, session['user_id']))
+        mysql.connection.commit()
+
+        flash("Application submitted successfully!")
+        return redirect(url_for('employee_dashboard'))
+
+    return render_template('employee_apply.html')
+
 @app.route('/create-users-table')
 def create_users_table():
     cur = mysql.connection.cursor()
@@ -174,7 +205,6 @@ def create_jobs_table():
 def initialize_database():
     cur = mysql.connection.cursor()
 
-    # Create users table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -187,7 +217,6 @@ def initialize_database():
         )
     """)
 
-    # Create jobs table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS jobs (
             id INT AUTO_INCREMENT PRIMARY KEY,
@@ -205,25 +234,23 @@ def initialize_database():
 
 @app.route('/create-applications-table')
 def create_applications_table():
-        cur = mysql.connection.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS applications (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                user_id INT,
-                job_id INT,
-                status ENUM('Applied', 'Under Review', 'Interview Scheduled', 'Rejected', 'Selected') DEFAULT 'Applied',
-                resume_path VARCHAR(255),
-                applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (user_id) REFERENCES users(id),
-                FOREIGN KEY (job_id) REFERENCES jobs(id)
-            )
-        """)
-        mysql.connection.commit()
-        return "✅ Applications table created!"
-
+    cur = mysql.connection.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS applications (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            user_id INT,
+            job_id INT,
+            status ENUM('Applied', 'Under Review', 'Interview Scheduled', 'Rejected', 'Selected') DEFAULT 'Applied',
+            resume_path VARCHAR(255),
+            applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (user_id) REFERENCES users(id),
+            FOREIGN KEY (job_id) REFERENCES jobs(id)
+        )
+    """)
+    mysql.connection.commit()
+    return "✅ Applications table created!"
 
 if __name__ == '__main__':
     with app.app_context():
         initialize_database()
-
     app.run(debug=True)
