@@ -2,119 +2,183 @@
 <html>
 <head>
     <title>Employee Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='loginReg.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            background: linear-gradient(to bottom, #e0f7ff, #a2d5f2);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 30px;
         }
-        .container {
-            width: 400px;
-            margin: 50px auto;
-            padding: 25px;
-            background-color: #f4f4f4;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+        .dashboard-container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
         }
+
         h2 {
             text-align: center;
-            color: #2a5d9f;
+            color: #678ac2;
         }
-        label {
+
+        .filter-container {
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .filter-container label {
             display: block;
-            margin: 10px 0 5px;
-            color: #333;
+            margin-top: 10px;
+            font-weight: 500;
         }
-        select, input[type="text"], button {
+
+        .filter-container select, .filter-container button {
             width: 100%;
             padding: 10px;
-            margin-bottom: 15px;
+            margin-top: 6px;
             border-radius: 5px;
             border: 1px solid #ccc;
+            font-size: 14px;
         }
-        button {
-            background-color: #2a5d9f;
+
+        .filter-container button {
+            background-color: #678ac2;
             color: white;
             border: none;
+            margin-top: 15px;
             cursor: pointer;
         }
-        button:hover {
-            background-color: #244a85;
+
+        .filter-container button:hover {
+            background-color: #4a6da1;
+        }
+
+        .job-card {
+            background: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #678ac2;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .job-card h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #678ac2;
+        }
+
+        .job-card p {
+            font-size: 14px;
+            color: #555;
+            margin: 4px 0;
+        }
+
+        .job-card input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        .job-card button {
+            background-color: #678ac2;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .job-card button:hover {
+            background-color: #4a6da1;
+        }
+
+        .upload-resume-link {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-resume-link a {
+            font-size: 1.2rem;
+            text-decoration: none;
+            color: #1d5093;
+        }
+
+        .upload-resume-link i {
+            margin-right: 6px;
         }
     </style>
 </head>
 <body>
-<<<<<<< HEAD
-    <h1>Welcome to the Employee Dashboard</h1>
-    <p>Here you can browse and apply for internal job postings.</p>
+    <div class="dashboard-container">
+        <h2>Welcome to the Employee Dashboard</h2>
+        <p style="text-align:center;">Browse and apply for internal job postings</p>
 
-    <!-- Link to general resume upload -->
-   <!-- Resume upload icon link -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <div class="upload-resume-link">
+            <a href="{{ url_for('employee_apply') }}">
+                <i class="fas fa-file-upload"></i> Apply with Resume
+            </a>
+        </div>
 
-<p>
-    <a href="{{ url_for('employee_apply') }}" style="text-decoration: none; font-size: 1.2rem; color: #1d5093;">
-        <i class="fas fa-file-upload"></i> Apply with Resume
-    </a>
-</p>
+        <div class="filter-container">
+            <h3>🔍 Search & Filter Jobs</h3>
+            <form method="GET" action="/dashboard/employee">
+                <label for="department">Department:</label>
+                <select name="department">
+                    <option value="">All</option>
+                    <option value="HR">HR</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Sales">Sales</option>
+                    <option value="IT">IT</option>
+                    <option value="Marketing">Marketing</option>
+                </select>
 
+                <label for="location">Location:</label>
+                <select name="location">
+                    <option value="">All</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Kochi">Kochi</option>
+                    <option value="Bangalore">Bangalore</option>
+                </select>
 
-    <h2>Available Jobs</h2>
-    <ul>
+                <label for="skill">Skill:</label>
+                <select name="skill">
+                    <option value="">All</option>
+                    <option value="Python">Python</option>
+                    <option value="Excel">Excel</option>
+                    <option value="Leadership">Leadership</option>
+                    <option value="Communication">Communication</option>
+                    <option value="Salesforce">Salesforce</option>
+                    <option value="C++">C++</option>
+                    <option value="Team Management">Team Management</option>
+                </select>
+
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <h3>Available Jobs</h3>
         {% for job in jobs %}
-        <li>
-            <strong>{{ job.title }}</strong> ({{ job.department }})<br>
-            Location: {{ job.location }}<br>
-            Skills Required: {{ job.skills_required }}<br>
-            Description: {{ job.description }}<br>
+        <div class="job-card">
+            <h3>{{ job.title }}</h3>
+            <p><strong>Department:</strong> {{ job.department }}</p>
+            <p><strong>Location:</strong> {{ job.location }}</p>
+            <p><strong>Skills Required:</strong> {{ job.skills_required }}</p>
+            <p><strong>Description:</strong> {{ job.description }}</p>
 
             <form action="{{ url_for('apply_job', job_id=job['id']) }}" method="POST" enctype="multipart/form-data">
-                <label>Attach Resume:</label>
                 <input type="file" name="resume" required>
                 <button type="submit">Apply</button>
             </form>
-
-            <hr>
-        </li>
+        </div>
         {% endfor %}
-    </ul>
-=======
-    <div class="container">
-        <h2 style="margin-bottom: 20px;">🔍 Search & Filter Jobs</h2>
-        <form method="GET" action="/dashboard/employee">
-            <label for="department">Department:</label>
-            <select name="department">
-                <option value="">All</option>
-                <option value="HR">HR</option>
-                <option value="Finance">Finance</option>
-                <option value="Sales">Sales</option>
-                <option value="IT">IT</option>
-                <option value="Marketing">Marketing</option>
-            </select>
-
-            <label for="location">Location:</label>
-            <select name="location">
-                <option value="">All</option>
-                <option value="Chennai">Chennai</option>
-                <option value="Kolkata">Kolkata</option>
-                <option value="Kochi">Kochi</option>
-                <option value="Bangalore">Bangalore</option>
-            </select>
-
-            <label for="skill">Skill:</label>
-            <select name="skill">
-                <option value="">All</option>
-                <option value="Python">Python</option>
-                <option value="Excel">Excel</option>
-                <option value="Leadership">Leadership</option>
-                <option value="Communication">Communication</option>
-                <option value="Salesforce">Salesforce</option>
-                <option value="C++">C++</option>
-                <option value="Team Management">Team Management</option>
-            </select>
-
-            <button type="submit">Search</button>
-        </form>
     </div>
->>>>>>> 253d671ecbf253822c3a72f95b33065973d5205c
 </body>
 </html>
