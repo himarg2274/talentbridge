@@ -1,31 +1,184 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HR Dashboard</title>
+    <title>Employee Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='loginReg.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f1f5f9;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .dashboard-container {
+            max-width: 1000px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #678ac2;
+        }
+
+        .filter-container {
+            background: #f4f4f4;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .filter-container label {
+            display: block;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .filter-container select, .filter-container button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .filter-container button {
+            background-color: #678ac2;
+            color: white;
+            border: none;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .filter-container button:hover {
+            background-color: #4a6da1;
+        }
+
+        .job-card {
+            background: #ffffff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #678ac2;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+
+        .job-card h3 {
+            margin: 0 0 10px;
+            font-size: 18px;
+            color: #678ac2;
+        }
+
+        .job-card p {
+            font-size: 14px;
+            color: #555;
+            margin: 4px 0;
+        }
+
+        .job-card input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        .job-card button {
+            background-color: #678ac2;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .job-card button:hover {
+            background-color: #4a6da1;
+        }
+
+        .upload-resume-link {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-resume-link a {
+            font-size: 1.2rem;
+            text-decoration: none;
+            color: #1d5093;
+        }
+
+        .upload-resume-link i {
+            margin-right: 6px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome HR</h1>
+    <div class="dashboard-container">
+        <h2>Welcome to the Employee Dashboard</h2>
+        <p style="text-align:center;">Browse and apply for internal job postings</p>
 
-    <h2>Post a Job</h2>
-    <form method="POST">
-        <input type="text" name="title" placeholder="Job Title" required><br>
-        <textarea name="description" placeholder="Job Description" required></textarea><br>
-        <input type="text" name="department" placeholder="Department" required><br>
-        <input type="text" name="location" placeholder="Location" required><br>
-        <input type="text" name="skills" placeholder="Required Skills" required><br>
-        <button type="submit">Post Job</button>
-    </form>
+        <div class="upload-resume-link">
+            <a href="{{ url_for('employee_apply') }}">
+                <i class="fas fa-file-upload"></i> Apply with Resume
+            </a>
+        </div>
 
-    <h2>Posted Jobs</h2>
-<ul>
-    {% for job in jobs %}
-    <li>
-        <strong>{{ job['title'] }}</strong> – {{ job['department'] }}<br>
-        {{ job['description'] }}<br>
-        Location: {{ job['location'] }} | Skills: {{ job['skills_required'] }}
-    </li>
-    {% endfor %}
-</ul>
+        <div class="filter-container">
+            <h3>🔍 Search & Filter Jobs</h3>
+            <form method="GET" action="/dashboard/employee">
+                <label for="department">Department:</label>
+                <select name="department">
+                    <option value="">All</option>
+                    <option value="HR">HR</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Sales">Sales</option>
+                    <option value="IT">IT</option>
+                    <option value="Marketing">Marketing</option>
+                </select>
 
+                <label for="location">Location:</label>
+                <select name="location">
+                    <option value="">All</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Kochi">Kochi</option>
+                    <option value="Bangalore">Bangalore</option>
+                </select>
+
+                <label for="skill">Skill:</label>
+                <select name="skill">
+                    <option value="">All</option>
+                    <option value="Python">Python</option>
+                    <option value="Excel">Excel</option>
+                    <option value="Leadership">Leadership</option>
+                    <option value="Communication">Communication</option>
+                    <option value="Salesforce">Salesforce</option>
+                    <option value="C++">C++</option>
+                    <option value="Team Management">Team Management</option>
+                </select>
+
+                <button type="submit">Search</button>
+            </form>
+        </div>
+
+        <h3>Available Jobs</h3>
+        {% for job in jobs %}
+        <div class="job-card">
+            <h3>{{ job.title }}</h3>
+            <p><strong>Department:</strong> {{ job.department }}</p>
+            <p><strong>Location:</strong> {{ job.location }}</p>
+            <p><strong>Skills Required:</strong> {{ job.skills_required }}</p>
+            <p><strong>Description:</strong> {{ job.description }}</p>
+
+            <form action="{{ url_for('apply_job', job_id=job['id']) }}" method="POST" enctype="multipart/form-data">
+                <input type="file" name="resume" required>
+                <button type="submit">Apply</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
 </body>
 </html>
