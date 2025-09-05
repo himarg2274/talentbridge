@@ -125,7 +125,43 @@ talentbridge/
   *(Apply feature and resume upload coming soon)*
 
 ---
+## ✅ Covered Scenarios
 
+### 🔐 Login Tests
+- Valid Employee login  
+- Valid HR login  
+- Invalid login (wrong password / unknown user)  
+
+### 💼 Job Posting & Application
+- HR posts a new job  
+- Employee searches jobs (by department, location, skills)  
+- Employee applies for a job  
+
+### 👤 Profile & Notifications
+- Resume upload  
+- Application status tracking  
+- HR interview scheduling  
+- Notifications for new jobs  
+
+### 🔒 Security & Reliability
+- Password reset  
+- Multiple failed login attempts → account lock  
+- Session timeout handling  
+
+---
+
+## 🚀 How to Run Tests
+
+### 1️⃣ Install Robot Framework and Selenium
+
+```bash
+pip install robotframework
+pip install robotframework-seleniumlibrary
+```
+### 2️⃣ Run the Test Suite
+```bash
+robot tests/
+```
 ## 🛠️ Common Errors & Fixes
 
 | Error | Fix |
@@ -135,6 +171,7 @@ talentbridge/
 | `Table 'users' or 'jobs' doesn't exist` | Just re-run `app.py` – tables are auto-created |
 
 ---
+
 
 
 
