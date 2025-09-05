@@ -92,10 +92,7 @@ http://localhost:5000
 ```
 
 ---
-
-## 💻 Folder Structure
-
-```
+````
 talentbridge/
 │
 ├── app.py                  # Main Flask app
@@ -106,9 +103,12 @@ talentbridge/
 │   ├── dashboard_hr.html
 │   └── dashboard_employee.html
 ├── static/                 # Optional folder for CSS/JS
+├── tests/                  # Robot Framework test cases
+│   ├── login_tests.robot
+│   ├── job_posting_tests.robot
+│   └── application_flow_tests.robot
 └── README.md               # This file
-```
-
+````
 ---
 
 ## ✅ What Happens When You Run the App?
@@ -135,5 +135,6 @@ talentbridge/
 | `Table 'users' or 'jobs' doesn't exist` | Just re-run `app.py` – tables are auto-created |
 
 ---
+
 
 
